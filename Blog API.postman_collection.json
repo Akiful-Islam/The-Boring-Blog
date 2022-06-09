@@ -1,0 +1,445 @@
+{
+	"info": {
+		"_postman_id": "aae4ba7f-1c98-4a99-8c00-d1b0f31500c7",
+		"name": "Blog API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21368184"
+	},
+	"item": [
+		{
+			"name": "Public",
+			"item": [
+				{
+					"name": "Signing",
+					"item": [
+						{
+							"name": "User signup",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const res = JSON.parse(responseBody);\r",
+											"pm.collectionVariables.set(\"token\", res.token);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"\",\r\n    \"email\":\"a\",\r\n    \"password\":\"a\",\r\n    \"dateOfBirth\":\"-10-11\",\r\n    \"gender\":\"a\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/users/signup",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"users",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User signin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const res = JSON.parse(responseBody);\r",
+											"pm.collectionVariables.set(\"token\", res.token);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"a\",\r\n    \"password\": \"a\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/users/signin",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"users",
+										"signin"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Protected",
+			"item": [
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "View user profile",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/users/profile",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"users",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all users",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/users/",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"users",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update user profile",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"f\",\r\n    \"password\":\"d\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/users/profile",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"users",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update user password",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"oldPassword\": \"d\",\r\n    \"newPassword\": \"e\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/users/profile/",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"users",
+										"profile",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Blog",
+					"item": [
+						{
+							"name": "Write blog",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\":\"\",\r\n    \"description\":\"bb\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/blogs/write",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"blogs",
+										"write"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all blogs",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{blogAPI}}/blogs/",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"blogs",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all user blogs",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "text"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/blogs/personalblogs/",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"blogs",
+										"personalblogs",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get blogs by userId",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{blogAPI}}/blogs/blog/1",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"blogs",
+										"blog",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit blog",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"blogId\":\"\",\r\n    \"title\":\"\",\r\n    \"description\":\"description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/blogs/edit",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"blogs",
+										"edit"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete blog",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"blogId\":\"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{blogAPI}}/blogs/delete",
+									"host": [
+										"{{blogAPI}}"
+									],
+									"path": [
+										"blogs",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "blogAPI",
+			"value": "http://localhost:1337/api"
+		},
+		{
+			"key": "token",
+			"value": "---",
+			"type": "default"
+		}
+	]
+}
