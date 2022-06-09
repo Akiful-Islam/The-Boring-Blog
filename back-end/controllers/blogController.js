@@ -1,6 +1,9 @@
 import asyncHandler from "express-async-handler";
 import database from "../config/database.js";
 import { blogTbl, userTbl } from "../config/databaseConst.js";
+import NodeCache from "node-cache";
+
+const mikeAsh = new NodeCache();
 
 /*@desc Get personal blogs
   @route GET /api/blogs/personalblogs
@@ -45,10 +48,15 @@ export const getBlogsByUser = asyncHandler(async (req, res) => {
   @route GET /api/blogs/
   @access Private*/
 export const getAllBlogs = asyncHandler(async (req, res) => {
-  const [rows] = await database.query(`SELECT * FROM ${blogTbl.tableName};`);
+  const blogCache = mikeAsh.get("blogCache");
 
-  const blogList = rows;
-  res.json(blogList);
+  if (blogCache === undefined) {
+    const [rows] = await database.query(`SELECT * FROM ${blogTbl.tableName};`);
+    const blogList = rows;
+    mikeAsh.set("blogCache", blogList, 15);
+  }
+
+  res.json(mikeAsh.get("blogCache"));
 });
 
 /*@desc Create a blog
