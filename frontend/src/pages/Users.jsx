@@ -12,7 +12,6 @@ const Users = () => {
   const getUsers = async () => {
     const result = await UserService.getAllUsers();
     if (result.success) {
-      console.log(result.data);
       setUsers(result.data);
     }
   };
