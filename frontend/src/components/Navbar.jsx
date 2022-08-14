@@ -16,15 +16,15 @@ import { AuthContext } from "../context/AuthContext";
 
 const pages = [
   {
-    name: "feed",
+    name: "Feed",
     link: "/",
   },
   {
-    name: "users",
+    name: "Users",
     link: "/users",
   },
   {
-    name: "profile",
+    name: "Profile",
     link: "/profile",
   },
 ];
@@ -64,12 +64,11 @@ const Navbar = () => {
             <Typography
               variant="h6"
               sx={{
-                mr: 2,
                 display: { xs: "none", md: "flex" },
                 color: "#ffffff",
               }}
             >
-              APP LOGO
+              The Boring Blog
             </Typography>
           </Link>
 
@@ -120,11 +119,11 @@ const Navbar = () => {
                 color: "#ffffff",
               }}
             >
-              APP LOGO
+              The Boring Blog
             </Typography>
           </Link>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box sx={{ flexGrow: 1.25, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
                 key={page.name}
