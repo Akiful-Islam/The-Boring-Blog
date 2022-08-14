@@ -3,7 +3,7 @@ export const dbName = "crud_db";
 export const userTbl = {
   tableName: "userTable",
   userID: "userId",
-  userName: "name",
+  userName: "username",
   email: "email",
   dob: "dateOfBirth",
   gender: "gender",
@@ -14,7 +14,7 @@ export const blogTbl = {
   tableName: "blogTable",
   blogID: "blogId",
   title: "title",
-  description: "description",
+  description: "content",
   dateCreated: "dateCreated",
   userID: "userId",
 };

@@ -32,9 +32,11 @@ export const getBlogsByUser = asyncHandler(async (req, res) => {
   );
   const userExists = rows[0];
   if (userExists) {
-    const [results] = await database.query(
-      `SELECT * FROM ${blogTbl.tableName} WHERE ${blogTbl.userID}='${userId}'`
-    );
+    const [results] =
+      await database.query(`SELECT ${blogTbl.tableName}.*, ${userTbl.userName} FROM ${blogTbl.tableName} 
+    JOIN ${userTbl.tableName} USING(${userTbl.userID}) 
+    WHERE ${userTbl.userID} = '${userId}' 
+    ORDER BY ${blogTbl.dateCreated} DESC;`);
     const blogList = results;
 
     res.json(blogList);
@@ -51,7 +53,12 @@ export const getAllBlogs = asyncHandler(async (req, res) => {
   const blogCache = mikeAsh.get("blogCache");
 
   if (blogCache === undefined) {
-    const [rows] = await database.query(`SELECT * FROM ${blogTbl.tableName};`);
+    const [rows] =
+      await database.query(`SELECT ${blogTbl.tableName}.*, ${userTbl.userName} 
+      FROM ${blogTbl.tableName} 
+    JOIN ${userTbl.tableName} 
+    USING(${userTbl.userID}) 
+    ORDER BY ${blogTbl.dateCreated} DESC;`);
     const blogList = rows;
     mikeAsh.set("blogCache", blogList, 15);
   }
@@ -63,20 +70,22 @@ export const getAllBlogs = asyncHandler(async (req, res) => {
   @route POST /api/blogs/write
   @access Private*/
 export const writeBlog = asyncHandler(async (req, res) => {
-  const { title, description } = req.body;
+  const { title, content } = req.body;
   const userId = req.user[userTbl.userID];
+  const username = req.user[userTbl.userName];
 
   const [rows] = await database.query(`INSERT INTO ${blogTbl.tableName}
     (${blogTbl.title},${blogTbl.description},${blogTbl.userID})
-    VALUES ('${title}','${description}','${userId}');
+    VALUES ('${title}','${content}','${userId}');
     `);
 
   res.json({
     blogId: rows.insertId,
     title,
-    description,
+    content,
     dateCreated: new Date(),
     userId,
+    username,
   });
 });
 
@@ -84,8 +93,9 @@ export const writeBlog = asyncHandler(async (req, res) => {
   @route PATCH /api/blogs/edit
   @access Private*/
 export const editBlog = asyncHandler(async (req, res) => {
-  const { blogId, title, description } = req.body;
+  const { blogId, title, content } = req.body;
   const userId = req.user[userTbl.userID];
+  const username = req.user[userTbl.userName];
 
   const [rows] = await database.query(
     `SELECT * FROM ${blogTbl.tableName} WHERE ${blogTbl.blogID}='${blogId}'`
@@ -97,22 +107,23 @@ export const editBlog = asyncHandler(async (req, res) => {
 
   if (blog && isAuthor) {
     const updatedTitle = title || blog[blogTbl.title];
-    const updatedDesc = description || blog[blogTbl.description];
+    const updatedDesc = content || blog[blogTbl.description];
 
     console.log(userId, blogId, updatedTitle, updatedDesc);
 
     const [result] = await database.query(
       `UPDATE ${blogTbl.tableName}
-      SET ${blogTbl.title}=${updatedTitle}, ${blogTbl.description}=${updatedDesc}
+      SET ${blogTbl.title}='${updatedTitle}', ${blogTbl.description}='${updatedDesc}'
       WHERE ${blogTbl.blogID}=${blogId} AND ${blogTbl.userID}=${userId};`
     );
 
     res.json({
       blogId,
       title: updatedTitle,
-      description: updatedDesc,
+      content: updatedDesc,
       dateCreated: blog[blogTbl.dateCreated],
       userId,
+      username,
     });
   } else if (!blog) {
     res.status(401);
@@ -127,7 +138,7 @@ export const editBlog = asyncHandler(async (req, res) => {
   @route DELETE /api/blogs/delete
   @access Private*/
 export const deleteBlog = asyncHandler(async (req, res) => {
-  const { blogId } = req.body;
+  const { blogId } = req.params;
   const userId = req.user[userTbl.userID];
 
   const [rows] = await database.query(

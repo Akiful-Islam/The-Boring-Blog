@@ -22,7 +22,7 @@ blogRouter
   .post(
     [
       check("title", "Title can not be empty.").notEmpty(),
-      check("description", "Description can not be empty.").notEmpty(),
+      check("content", "Content can not be empty.").notEmpty(),
     ],
     validationCheck,
     writeBlog
@@ -36,7 +36,7 @@ blogRouter
       check("title", "Title can not be empty.")
         .optional({ nullable: true })
         .notEmpty(),
-      check("description", "Description can not be empty.")
+      check("content", "Content can not be empty.")
         .optional({ nullable: true })
         .notEmpty(),
     ],
@@ -45,7 +45,7 @@ blogRouter
   );
 
 blogRouter
-  .route("/delete")
+  .route("/delete/:blogId")
   .delete(
     [check("blogId", "Blog ID required.").notEmpty()],
     validationCheck,

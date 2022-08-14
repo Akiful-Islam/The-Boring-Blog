@@ -6,6 +6,7 @@ import {
   updateUserProfile,
   updateUserPassword,
   getAllUser,
+  getProfileById,
 } from "../controllers/userController.js";
 import { check } from "express-validator";
 import { validationCheck } from "../middleware/validationMiddleware.js";
@@ -19,7 +20,7 @@ userRouter
   .route("/signup")
   .post(
     [
-      check("name", "Name field can not be empty.").notEmpty(),
+      check("username", "Name field can not be empty.").notEmpty(),
       check("email", "Invalid email.").isEmail(),
       check("gender", "Gender field can not be empty.").notEmpty(),
       check(
@@ -43,7 +44,7 @@ userRouter
   .patch(
     protect,
     [
-      check("name", "Name field can not be empty.")
+      check("username", "Name field can not be empty.")
         .optional({ nullable: true })
         .notEmpty(),
       check("email", "Invalid email.").optional({ nullable: true }).isEmail(),
@@ -76,10 +77,17 @@ userRouter
         .withMessage(
           "Invalid Password. Password must contain: at least 8 characters, an uppercase letter, a lowercase letter, a number and a special character."
         ),
+      check("confirmPassword")
+        .custom(
+          (confirmPassword, { req }) => req.body.newPassword !== confirmPassword
+        )
+        .withMessage("New Passwords Do Not Match!"),
     ],
     validationCheck,
     updateUserPassword
   );
+
+userRouter.route("/profile/:userId").get(protect, getProfileById);
 
 userRouter.route("/").get(getAllUser);
 

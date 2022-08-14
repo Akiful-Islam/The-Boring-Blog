@@ -19,13 +19,13 @@ export const signinUser = asyncHandler(async (req, res) => {
   if (user && (await verifyPassword(user[userTbl.password], password))) {
     res.json({
       userId: user[userTbl.userID],
-      name: user[userTbl.userName],
+      username: user[userTbl.userName],
       email: user[userTbl.email],
       token: generateToken(user[userTbl.userID]),
     });
   } else {
     res.status(401);
-    throw Error("Invalid email and password");
+    throw Error("Invalid email or password");
   }
 });
 
@@ -33,7 +33,7 @@ export const signinUser = asyncHandler(async (req, res) => {
   @route POST /api/users/signup
   @access Public */
 export const signupUser = asyncHandler(async (req, res) => {
-  const { name, email, dateOfBirth, gender, password } = req.body;
+  const { username, email, dateOfBirth, gender, password } = req.body;
 
   const [isEmailUsed] = await database.query(
     `SELECT ${userTbl.email} FROM ${userTbl.tableName} WHERE ${userTbl.email} = '${email}';`
@@ -46,12 +46,12 @@ export const signupUser = asyncHandler(async (req, res) => {
       }, ${userTbl.userName}, ${userTbl.dob}, ${userTbl.gender}) 
        VALUES ('${email}', '${await hashPassword(
         password
-      )}', '${name}','${dateOfBirth}','${gender}');`
+      )}', '${username}','${dateOfBirth}','${gender}');`
     );
 
     res.json({
       userId: rows.insertId,
-      name,
+      username,
       email,
       token: generateToken(rows.insertId),
     });
@@ -77,7 +77,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
   if (userInfo) {
     res.json({
       userId: userInfo[userTbl.userID],
-      name: userInfo[userTbl.userName],
+      username: userInfo[userTbl.userName],
       email: userInfo[userTbl.email],
       dateOfBirth: userInfo[userTbl.dob],
       gender: userInfo[userTbl.gender],
@@ -94,7 +94,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 export const updateUserProfile = asyncHandler(async (req, res) => {
   const userId = req.user[userTbl.userID];
 
-  const { name, email, dateOfBirth, gender, password } = req.body;
+  const { username, email, dateOfBirth, gender, password } = req.body;
 
   const [results] = await database.query(
     `SELECT * FROM ${userTbl.tableName} WHERE ${userTbl.userID} = '${userId}';`
@@ -109,11 +109,11 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 
   if (user && passwordCorrect) {
     const [isEmailUsed] = await database.query(
-      `SELECT ${userTbl.email} FROM ${userTbl.tableName} WHERE ${userTbl.email} = '${email}';`
+      `SELECT ${userTbl.email} FROM ${userTbl.tableName} WHERE ${userTbl.email} = '${email}' AND ${userTbl.userID} != ${userId};`
     );
 
     if (!isEmailUsed.length) {
-      const updatedName = name || user[userTbl.userName];
+      const updatedName = username || user[userTbl.userName];
       const updatedEmail = email || user[userTbl.email];
       const updatedGender = gender || user[userTbl.gender];
       const updatedDOB = dateOfBirth || user[userTbl.dob];
@@ -128,7 +128,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 
       res.json({
         userId,
-        name: updatedName,
+        username: updatedName,
         email: updatedEmail,
         gender: updatedGender,
         dateOfBirth: updatedDOB,
@@ -181,8 +181,31 @@ export const updateUserPassword = asyncHandler(async (req, res) => {
 export const getAllUser = asyncHandler(async (req, res) => {
   const [rows] =
     await database.query(`SELECT ${userTbl.userID},${userTbl.userName},${userTbl.email},${userTbl.dob},${userTbl.gender} 
-  FROM ${userTbl.tableName};`);
+  FROM ${userTbl.tableName} ORDER BY ${userTbl.userName};`);
 
   const userList = rows;
   res.json(userList);
+});
+
+export const getProfileById = asyncHandler(async (req, res) => {
+  const userId = req.params.userId;
+
+  const [rows] = await database.query(
+    `SELECT * FROM ${userTbl.tableName} 
+     WHERE ${userTbl.userID}='${userId}';`
+  );
+  const userInfo = rows[0];
+
+  if (userInfo) {
+    res.json({
+      userId: userInfo[userTbl.userID],
+      username: userInfo[userTbl.userName],
+      email: userInfo[userTbl.email],
+      dateOfBirth: userInfo[userTbl.dob],
+      gender: userInfo[userTbl.gender],
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
 });
