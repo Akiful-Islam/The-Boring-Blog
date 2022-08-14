@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import React, { useContext, useState } from "react";
+import { AlertContext } from "../../context/AlertContext";
 import { AuthContext } from "../../context/AuthContext";
 import UserService from "../../service/UserService";
 import generateProfileImage from "../../utils/generateProfileImage";
@@ -17,7 +18,10 @@ import EditProfile from "../dialog_items/EditProfile";
 const ProfileCard = ({ data, onProfileUpdate }) => {
   const [openProfileEditor, setOpenProfileEditor] = useState(false);
   const [openPasswordEditor, setOpenPasswordEditor] = useState(false);
+
   const authContext = useContext(AuthContext);
+
+  const alertContext = useContext(AlertContext);
 
   const closeProfileEditor = () => {
     setOpenProfileEditor(false);
@@ -27,8 +31,9 @@ const ProfileCard = ({ data, onProfileUpdate }) => {
     const result = await UserService.updateProfile(values);
     if (result.success) {
       onProfileUpdate(result.data);
+      alertContext.alertMode.toggleAlert("success", "Profile Updated.");
     } else {
-      console.log(result.error);
+      alertContext.alertMode.toggleAlert("error", result.error);
     }
     setOpenProfileEditor(false);
   };
@@ -40,6 +45,12 @@ const ProfileCard = ({ data, onProfileUpdate }) => {
   const submitPasswordEdit = async (values) => {
     const result = await UserService.updatePassword(values);
     if (result.success) {
+      alertContext.alertMode.toggleAlert(
+        "success",
+        "Password Changed Successfully."
+      );
+    } else {
+      alertContext.alertMode.toggleAlert("error", result.error);
     }
     setOpenPasswordEditor(false);
   };

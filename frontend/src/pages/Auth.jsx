@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import SignIn from "../components/auth_items/SignIn";
 import SignUp from "../components/auth_items/SignUp";
 import GlassCard from "../components/card_items/GlassCard";
+import { AlertContext } from "../context/AlertContext";
 import { AuthContext } from "../context/AuthContext";
 import AuthService from "../service/AuthService";
 
@@ -23,6 +24,8 @@ const Auth = () => {
 
   const navigate = useNavigate();
 
+  const alertContext = useContext(AlertContext);
+
   const handleSignup = async (values) => {
     const result = await AuthService.signup(values);
 
@@ -30,7 +33,7 @@ const Auth = () => {
       authContext.setAuthInfo(result.data);
       navigate("/");
     } else {
-      console.log(result.error);
+      alertContext.alertMode.toggleAlert("error", result.error);
     }
   };
 
@@ -41,7 +44,7 @@ const Auth = () => {
       authContext.setAuthInfo(result.data);
       navigate("/");
     } else {
-      console.log(result.error);
+      alertContext.alertMode.toggleAlert("error", result.error);
     }
   };
   return (

@@ -16,6 +16,7 @@ import WriteBlog from "../dialog_items/WriteBlog";
 import BlogService from "../../service/BlogService";
 import { BlogListContext } from "../../context/BlogListContext";
 import { UserBlogListContext } from "../../context/UserBlogListContext";
+import { AlertContext } from "../../context/AlertContext";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -36,6 +37,8 @@ const BlogItem = ({ data }) => {
   const blogListContext = useContext(BlogListContext);
   const userBlogListContext = useContext(UserBlogListContext);
 
+  const alertContext = useContext(AlertContext);
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -55,13 +58,18 @@ const BlogItem = ({ data }) => {
           blog.blogId === result.data.blogId ? result.data : blog
         )
       );
+
       userBlogListContext.setBlogList(
         userBlogListContext.blogList.map((blog) =>
           blog.blogId === result.data.blogId ? result.data : blog
         )
       );
-      setOpenEditDialog(false);
+
+      alertContext.alertMode.toggleAlert("success", "Blog Updated.");
+    } else {
+      alertContext.alertMode.toggleAlert("error", result.error);
     }
+    setOpenEditDialog(false);
   };
 
   const onDelete = async () => {
@@ -70,13 +78,18 @@ const BlogItem = ({ data }) => {
       blogListContext.setBlogList(
         blogListContext.blogList.filter((blog) => blog.blogId !== data.blogId)
       );
+
       userBlogListContext.setBlogList(
         userBlogListContext.blogList.filter(
           (blog) => blog.blogId !== data.blogId
         )
       );
-      setOpenEditDialog(false);
+
+      alertContext.alertMode.toggleAlert("success", "Blog Deleted.");
+    } else {
+      alertContext.alertMode.toggleAlert("error", result.error);
     }
+    setOpenEditDialog(false);
   };
 
   return (

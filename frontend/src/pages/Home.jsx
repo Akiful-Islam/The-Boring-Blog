@@ -8,12 +8,15 @@ import WriteBlog from "../components/dialog_items/WriteBlog";
 import BlogService from "../service/BlogService";
 import { BlogListContext } from "../context/BlogListContext";
 import { UserBlogListContext } from "../context/UserBlogListContext";
+import { AlertContext } from "../context/AlertContext";
 
 const Home = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const blogListContext = useContext(BlogListContext);
 
   const userBlogListContext = useContext(UserBlogListContext);
+
+  const alertContext = useContext(AlertContext);
 
   const handleDialogOpen = () => {
     setOpenDialog(true);
@@ -23,8 +26,15 @@ const Home = () => {
   };
   const handleSubmit = async (values) => {
     const result = await BlogService.writeBlog(values);
+
     if (result.success) {
       blogListContext.setBlogList([result.data, ...blogListContext.blogList]);
+
+      alertContext.alertMode.toggleAlert(
+        "success",
+        "Blog Posted Successfully."
+      );
+
       if (userBlogListContext.userId === result.data.userId) {
         userBlogListContext.setBlogList([
           result.data,
@@ -32,7 +42,7 @@ const Home = () => {
         ]);
       }
     } else {
-      console.log(result.error);
+      alertContext.alertMode.toggleAlert("error", result.error);
     }
     handleDialogClose();
   };
